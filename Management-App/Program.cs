@@ -1,11 +1,28 @@
+using Management.Data;
+using Management_Core.Interface;
+using Management_Core.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddDbContext<ProductEntitlementsContext>(x => x.UseNpgsql(builder.Configuration.GetConnectionString("ManagementDev")));
+builder.Services.AddScoped<IUserServices, UserServices >();
+builder.Services.AddScoped<IRoleServices, RoleServices >();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Management App API",
+        Version = "v1",
+        Description = "Api Management App for Admin",
+    });
+});
 
 var app = builder.Build();
 
@@ -13,7 +30,10 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Management Api v1");
+    });
 }
 
 app.UseHttpsRedirection();
