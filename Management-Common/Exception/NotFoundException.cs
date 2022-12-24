@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Management_Common.Exception
+﻿namespace Management_Common.Exception
 {
-    public class NotFoundException: SystemException
+    public class NotFoundException: System.Exception
     {
         public NotFoundException()
         {
