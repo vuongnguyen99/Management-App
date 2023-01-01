@@ -1,9 +1,7 @@
-﻿using Management.Data.Entites;
+﻿using Management.Data.Entities;
 using Management_Common.Exception;
 using Management_Core.Interface;
 using Management_Core.Models.Role;
-using Management_Core.Models.User;
-using Management_Core.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Management_App.Controllers.v1
@@ -21,10 +19,10 @@ namespace Management_App.Controllers.v1
         /// Create new role. For admins only.
         /// </summary>
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Role))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CreateRoleResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
-        public async Task<IActionResult> CreateUser([FromBody] CreateRole request, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateUser([FromBody] CreateRoleRequest request, CancellationToken cancellationToken)
         {
             try
             {

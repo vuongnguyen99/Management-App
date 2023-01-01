@@ -7,9 +7,9 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddDbContext<ProductEntitlementsContext>(x => x.UseNpgsql(builder.Configuration.GetConnectionString("ManagementDev")));
-builder.Services.AddScoped<IUserServices, UserServices >();
-builder.Services.AddScoped<IRoleServices, RoleServices >();
+builder.Services.AddDbContext<ManagementDbContext>(x => x.UseNpgsql(builder.Configuration.GetConnectionString("ManagementDev")));
+builder.Services.AddScoped<IUserServices, UserServices>();
+builder.Services.AddScoped<IRoleServices, RoleServices>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

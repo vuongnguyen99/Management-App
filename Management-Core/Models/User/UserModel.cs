@@ -1,4 +1,4 @@
-﻿using Management.Data.Entites;
+﻿using Management.Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,8 +17,23 @@ namespace Management_Core.Models.User
         public string? UserName { get; set; }
         public bool Gender { get; set; }
         public bool Active { get; set; }
-        public virtual ICollection<UserRole>? UserRoles { get; set; }
-        public virtual ICollection<Cart>? Carts { get; set; }
+        public virtual ICollection<UserRoleModel>? UserRoleModel { get; set; }
+        public virtual ICollection<UserCartModel>? UserCartModel { get; set; }
+    }
+
+    public class UserRoleModel
+    {
+        public Guid RoleId { get; set; }
+        public string? RoleName { get; set; }    
+        public string? Description { get; set; }    
+    }
+
+    public class UserCartModel
+    {
+        public Guid CartId { set; get; }
+        public Guid ProductId { set; get; }
+        public int Quantity { set; get; }
+        public decimal Price { set; get; }
     }
 
     public class GuidObject

@@ -1,5 +1,5 @@
 ﻿using Management.Data;
-using Management.Data.Entites;
+using Management.Data.Entities;
 using Management_Core.Interface;
 using Management_Core.Models.Role;
 using System;
@@ -12,28 +12,26 @@ namespace Management_Core.Services
 {
     public class RoleServices : IRoleServices
     {
-        private readonly ProductEntitlementsContext _dbContext;
-        public RoleServices(ProductEntitlementsContext dbContext)
+        private readonly ManagementDbContext _dbContext;
+        public RoleServices(ManagementDbContext dbContext)
         {
             _dbContext = dbContext;
         }
-        public async Task<Role> CreateRole(CreateRole request, CancellationToken cancellationToken)
+
+        public async Task<CreateRoleResponse> CreateRole(CreateRoleRequest request, CancellationToken cancellationToken)
         {
             var newRole = new Role()
             {
-                Id = Guid.NewGuid(),
                 Name = request.Name,
-                CreateBy = "UnKnown",
-                CreateDate = DateTime.UtcNow,
-                ModifiedBy = "UnKnown",
-                ModifiedDate = DateTime.UtcNow,
+                Description = request.Description
             };
             await _dbContext.Roles.AddAsync(newRole, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
-            return new Role
+            return new CreateRoleResponse
             {
                 Id = newRole.Id,
                 Name = request.Name,
+                Description = request.Description,
                 CreateBy = newRole.CreateBy,
                 CreateDate = newRole.CreateDate,
                 ModifiedBy = newRole.ModifiedBy,
