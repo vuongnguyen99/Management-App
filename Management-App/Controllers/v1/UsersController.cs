@@ -1,5 +1,4 @@
-﻿using Management.Data.Entites;
-using Management_Common.Exception;
+﻿using Management_Common.Exception;
 using Management_Core.Interface;
 using Management_Core.Models.Paging;
 using Management_Core.Models.User;
@@ -14,11 +13,9 @@ namespace Management_App.Controllers.v1
     public class UsersController : ControllerBase
     {
         private readonly IUserServices _userServices;
-        private readonly ILogger _logger;
-        public UsersController(IUserServices userServices, ILogger logger)
+        public UsersController(IUserServices userServices)
         {
             _userServices = userServices;
-            _logger = logger;
         }
 
         /// <summary>
@@ -28,7 +25,7 @@ namespace Management_App.Controllers.v1
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CreateUserResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
-        public async Task<IActionResult> CreateUser([FromBody] CreateUser request, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request, CancellationToken cancellationToken)
         {
             try
             {
@@ -41,7 +38,6 @@ namespace Management_App.Controllers.v1
             }
             catch (Exception ex)
             {
-                _logger.LogError("UserLog Error:" + ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
@@ -71,13 +67,12 @@ namespace Management_App.Controllers.v1
             }
             catch (Exception ex)
             {
-                _logger.LogError("UserLog Error:" + ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
         /// <summary>
-        /// Get an user by userId. For admins only.
+        /// Get an user with all information by userId. For admins only.
         /// </summary>
         [HttpGet("id")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserModel))]
@@ -101,7 +96,6 @@ namespace Management_App.Controllers.v1
             }
             catch (Exception ex)
             {
-                _logger.LogError("UserLog Error:" + ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
@@ -131,7 +125,6 @@ namespace Management_App.Controllers.v1
             }
             catch (Exception ex)
             {
-                _logger.LogError("UserLog Error:" + ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
@@ -139,7 +132,7 @@ namespace Management_App.Controllers.v1
         /// <summary>
         /// Disable an user. For admins only.
         /// </summary>
-        [HttpDelete("id")]
+        [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
@@ -161,7 +154,6 @@ namespace Management_App.Controllers.v1
             }
             catch (Exception ex)
             {
-                _logger.LogError("UserLog Error:" + ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
@@ -191,7 +183,6 @@ namespace Management_App.Controllers.v1
             }
             catch (Exception ex)
             {
-                _logger.LogError("UserLog Error:" + ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
