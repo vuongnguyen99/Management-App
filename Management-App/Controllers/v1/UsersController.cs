@@ -25,11 +25,11 @@ namespace Management_App.Controllers.v1
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CreateUserResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
-        public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request,Guid? roleIds ,CancellationToken cancellationToken)
         {
             try
             {
-                var result = await _userServices.CreateNewUser(request, cancellationToken);
+                var result = await _userServices.CreateNewUser(request,roleIds ,cancellationToken);
                 return Ok(result);
             }
             catch (ValidationException ex)

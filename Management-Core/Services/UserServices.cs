@@ -6,6 +6,7 @@ using Management_Core.Interface;
 using Management_Core.Models.Paging;
 using Management_Core.Models.User;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
 
 namespace Management_Core.Services
 {
@@ -17,44 +18,48 @@ namespace Management_Core.Services
             _dbContext = dbContext;
         }
 
-        public async Task<CreateUserResponse> CreateNewUser(CreateUserRequest request, CancellationToken cancellationToken)
+        public async Task<CreateUserResponse> CreateNewUser(CreateUserRequest request, Guid? RolesId, CancellationToken cancellationToken)
         {
+            ValidateCreateAndUpdateUser(request);
             var newUser = new User
             {
-                FirstName = request.FirstName,
-                LastName = request.LastName,
+                FirstName = request.FirstName.ToLower(),
+                LastName = request.LastName.ToLower(),
                 Active = request.Active || true,
-                Email = request.Email,
+                Email = request.Email.ToLower(),
                 PasswordHash = PasswordHelper.HashPassword(request.PasswordHash),
-                Username = string.IsNullOrEmpty(request.Username) ? $"{request.FirstName}{request.LastName}" : request.Username,
+                Username = request.Email.Split('@')[0],
             };
             _dbContext.Users.Add(newUser);
             await _dbContext.SaveChangesAsync(cancellationToken);
-            var newListRole = new List<UserRole>();
-            var getRole = await (from role in _dbContext.Roles
-                                 select new { role.Name, role.Id }).ToListAsync();
-            foreach (var role in getRole)
+            var UserRoles = new List<UserRole>();
+
+            var roleObj = await _dbContext.Roles.FirstOrDefaultAsync(x => x.Id == RolesId, cancellationToken);
+            if (roleObj != null)
             {
-                newListRole.Add(new UserRole()
+                var assignRole = new UserRole
                 {
-                    RoleId = role.Id,
-                    UserId = newUser.Id
-                });
+                    UserId = newUser.Id,
+                    RoleId = roleObj.Id
+                };
+                
+                UserRoles.Add(assignRole);
+
             }
-            await _dbContext.UserRoles.AddRangeAsync(newListRole);
+            _dbContext.UserRoles.AddRange(UserRoles);
             await _dbContext.SaveChangesAsync();
-            //var getNewUserRole = await GetUserRoleByUserId(newUser.Id, cancellationToken);
-            var getNewUserRole = await _dbContext.UserRoles.Include(x=>x.Role).Where(x => x.UserId == newUser.Id).ToListAsync();
-            var ur = new List<CreateUserRoleResponse>();
-            foreach(var item in getNewUserRole)
+
+
+            var getNewUserRole = await _dbContext.UserRoles.Include(x => x.Role).Where(x => x.UserId == newUser.Id).ToListAsync();
+            var userRoles = new List<CreateUserRoleResponse>();
+            foreach (var item in getNewUserRole)
             {
-                ur.Add(new CreateUserRoleResponse()
+                userRoles.Add(new CreateUserRoleResponse()
                 {
                     RoleId = item.Role.Id,
                     RoleName = item.Role.Name,
                 });
             }
-            Console.WriteLine("userRole: ", ur);
             return new CreateUserResponse
             {
                 Id = newUser.Id,
@@ -62,9 +67,9 @@ namespace Management_Core.Services
                 LastName = newUser.LastName,
                 Email = newUser.Email,
                 Active = newUser.Active,
-                PasswordHash= newUser.PasswordHash,
+                PasswordHash = newUser.PasswordHash,
                 Username = newUser.Username,
-                UserRolesResponse = ur,
+                UserRolesResponse = userRoles,
                 CreateBy = newUser.CreateBy,
                 CreateDate = newUser.CreateDate,
                 ModifiedBy = newUser.ModifiedBy,
@@ -98,10 +103,36 @@ namespace Management_Core.Services
         }
 
         #region PrivateMethod
-        //private Dictionary<string, string> ValidateCreateAndUpdateUser (CreateUser request)
-        //{
+        private Dictionary<string, string> ValidateCreateAndUpdateUser(CreateUserRequest request)
+        {
+            var duplicateError = new Dictionary<string, string>();
+            var checkUserEmail = _dbContext.Users.FirstOrDefaultAsync(x => x.Email == request.Email);
+            if (checkUserEmail != null)
+            {
+                duplicateError.Add("Email", "Email is already exist");
+            }
 
-        //}
+            if (string.IsNullOrEmpty(request.FirstName))
+            {
+                duplicateError.Add("FirstName", "FirstName is required");
+            }
+
+            if (string.IsNullOrEmpty(request.LastName))
+            {
+                duplicateError.Add("LastName", "LastName is required");
+            }
+
+            if (string.IsNullOrEmpty(request.Email))
+            {
+                duplicateError.Add("Email", "Email is required");
+            }
+
+            if (string.IsNullOrEmpty(request.Username))
+            {
+                duplicateError.Add("Username", "Username is required");
+            }
+            return duplicateError;
+        }
 
         private string ValidatePaging(Pagination paging)
         {

@@ -5,7 +5,7 @@ namespace Management_Core.Interface
 {
     public interface IUserServices
     {
-        Task<CreateUserResponse> CreateNewUser(CreateUserRequest request, CancellationToken cancellationToken);
+        Task<CreateUserResponse> CreateNewUser(CreateUserRequest request,Guid? RolesId ,CancellationToken cancellationToken);
         Task<CreateUserResponse> UpdateUser(Guid Id, UpdateUser request, CancellationToken cancellationToken);
         Task<UserModel> GetUsersByIdAsync(Guid? userId, CancellationToken cancellationToken);
         Task<IReadOnlyList<UserModel>> GetUsersByFilterPageAsync(Pagination paging, CancellationToken cancellationToken);

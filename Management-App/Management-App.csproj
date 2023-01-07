@@ -18,12 +18,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Middleware\" />
+    <ProjectReference Include="..\Management-Common\Management-Common.csproj" />
+    <ProjectReference Include="..\Management-Core\Management-Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Management-Common\Management-Common.csproj" />
-    <ProjectReference Include="..\Management-Core\Management-Core.csproj" />
+    <Folder Include="Models\" />
   </ItemGroup>
 
 </Project>
