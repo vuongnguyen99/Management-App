@@ -1,10 +1,16 @@
 using Management.Data;
+using Management_App.Middleware;
 using Management_Core.Interface;
 using Management_Core.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+using var loggerFactory = LoggerFactory.Create(loggingBuilder => loggingBuilder
+    .SetMinimumLevel(LogLevel.Trace)
+    .AddConsole()
+    );
 
 // Add services to the container.
 builder.Services.AddDbContext<ManagementDbContext>(x => x.UseNpgsql(builder.Configuration.GetConnectionString("ManagementDev")));
@@ -41,6 +47,9 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.UseMiddleware<HttpLoggingMiddleware>();
+app.UseMiddleware<ErrorLoggingMiddleware>();
 
 app.MapControllers();
 
