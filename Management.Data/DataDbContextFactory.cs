@@ -14,7 +14,7 @@ namespace Data
         public ManagementDbContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<ManagementDbContext>();
-            optionsBuilder.UseNpgsql("Host=localhost;Database={YOUR_DATABASE_NAME};Username=postgres;Password={YOUR_PASSWORD};");
+            optionsBuilder.UseNpgsql("Host=localhost;Database=ManagementDev;Username=postgres;Password=Nguyenvuong1999;");
 
             return new ManagementDbContext(optionsBuilder.Options);
         }

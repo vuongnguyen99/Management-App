@@ -11,10 +11,10 @@ namespace Management.Data
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new CartConfiguration());
+            modelBuilder.ApplyConfiguration(new OrganizationConfiguration());
             modelBuilder.ApplyConfiguration(new ImageConfiguration());
-            modelBuilder.ApplyConfiguration(new OrderConfiguration());
-            modelBuilder.ApplyConfiguration(new OrderDetailConfiguration());
+            modelBuilder.ApplyConfiguration(new OrganizationTeamConfiguration());
+            modelBuilder.ApplyConfiguration(new UserProductConfiguration());
             modelBuilder.ApplyConfiguration(new ProductConfiguration());
             modelBuilder.ApplyConfiguration(new RolesConfiguration());
             modelBuilder.ApplyConfiguration(new UserConfiguration());
@@ -75,9 +75,9 @@ namespace Management.Data
         }
 
         public DbSet<Product> Products { get; set; }
-        public DbSet<Cart> Carts { get; set; }
-        public DbSet<Order> Orders { get; set; }
-        public DbSet<OrderDetail> OrderDetails { get; set; }
+        public DbSet<Organization> Organizations { get; set; }
+        public DbSet<OrganizationTeam> OrganizationTeams { get; set; }
+        public DbSet<UserProduct> UserProducts { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }

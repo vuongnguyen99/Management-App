@@ -12,7 +12,10 @@ namespace Management.Data.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
         public string Name { get; set; }
+        public Guid? OrganizationId { get; set; }
         public string? Description { get; set; }
         public virtual ICollection<UserRole>? UserRoles { get; set; }
+        public virtual ICollection<OrganizationTeam> OrganizationTeams { get; set; }
+        public virtual Organization Organization { get; set; }
     }
 }

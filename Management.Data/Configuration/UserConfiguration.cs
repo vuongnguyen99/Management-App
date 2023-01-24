@@ -18,7 +18,6 @@ namespace Management.Data.Configuration
             builder.Property(x => x.Email).IsRequired();
             builder.Property(x => x.PasswordHash).IsRequired();
             builder.Property(x => x.LoginFailedCount).HasDefaultValue(0);
-            builder.Property(x => x.Avatar).IsRequired(false);
             builder.Property(x => x.Active);
         }
     }
