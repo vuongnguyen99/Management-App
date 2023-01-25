@@ -24,6 +24,7 @@ namespace Management_Core.Services
             var newUser = new User
             {
                 FirstName = request.FirstName.ToLower(),
+                MiddleName = request.MiddleName.ToLower(),
                 LastName = request.LastName.ToLower(),
                 Active = request.Active || true,
                 Email = request.Email.ToLower(),
