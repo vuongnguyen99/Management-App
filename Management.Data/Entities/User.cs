@@ -13,15 +13,14 @@ namespace Management.Data.Entities
         public Guid Id { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-        public string? MiddleName { get; set; }
-        public string Email { get; set; }
-        public string Username { get; set; }
-        public string PasswordHash { get; set; }
+        public string? Email { get; set; }
+        public string? Username { get; set; }
+        public string? PasswordHash { get; set; }
         public bool Active { get; set; }
-        public int LoginFailedCount { get; set; }
-        public virtual ICollection<UserRole> UserRoles { get; set; }
-        public virtual ICollection<UserProduct> UserProducts { get; set; }
-        public virtual ICollection<OrganizationTeam> OrganizationTeams { get; set; }
-        public virtual ICollection<Image> Images { get; set; }
+        public int? LoginFailedCount { get; set; }
+        public virtual ICollection<UserRole>? UserRoles { get; set; }
+        public virtual ICollection<UserProduct>? UserProducts { get; set; }
+        public virtual ICollection<OrganizationTeam>? OrganizationTeams { get; set; }
+        public virtual ICollection<Image>? Images { get; set; }
     }
 }

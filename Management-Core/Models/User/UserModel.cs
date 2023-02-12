@@ -10,15 +10,12 @@ namespace Management_Core.Models.User
     public class UserModel: BaseModel
     {
         public Guid Id { get; set; }
-        public string? DisplayName { get; set; }
         public string? Email { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? UserName { get; set; }
-        public bool Gender { get; set; }
         public bool Active { get; set; }
         public virtual ICollection<UserRoleModel>? UserRoleModel { get; set; }
-        public virtual ICollection<UserCartModel>? UserCartModel { get; set; }
     }
 
     public class UserRoleModel

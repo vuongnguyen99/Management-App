@@ -1,7 +1,7 @@
 ﻿using Management_Common.Exception;
-using Management_Core.Interface;
 using Management_Core.Models.Paging;
 using Management_Core.Models.User;
+using Management_Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using ValidationException = Management_Common.Exception.ValidationException;
@@ -11,7 +11,7 @@ namespace Management_App.Controllers.v1
     [Route("api/v1/users")]
     [ApiController]
     public class UsersController : ControllerBase
-    {
+    { 
         private readonly IUserServices _userServices;
         public UsersController(IUserServices userServices)
         {
@@ -25,11 +25,11 @@ namespace Management_App.Controllers.v1
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CreateUserResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
-        public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request,Guid? roleIds ,CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request ,CancellationToken cancellationToken)
         {
             try
             {
-                var result = await _userServices.CreateNewUser(request,roleIds ,cancellationToken);
+                var result = await _userServices.CreateNewUser(request ,cancellationToken);
                 return Ok(result);
             }
             catch (ValidationException ex)

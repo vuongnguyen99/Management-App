@@ -16,9 +16,9 @@ namespace Management.Data.Entities
         public Guid? ParentOrganizationNodeId { get; set; }
         public Guid UserId { get; set; }
         public Guid? RoleId { get; set; }
-        public virtual Role Roles { get; set; }
-        public virtual Organization Organizations { get; set; }
-        public virtual Product Products { get; set; }
-        public virtual User Users { get; set; }
+        public virtual Role? Roles { get; set; }
+        public virtual Organization? Organizations { get; set; }
+        public virtual Product? Products { get; set; }
+        public virtual User? Users { get; set; }
     }
 }

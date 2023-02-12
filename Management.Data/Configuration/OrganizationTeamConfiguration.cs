@@ -20,7 +20,7 @@ namespace Management.Data.Configuration
             builder.Property(x => x.ParentOrganizationNodeId);
             builder.HasOne(x => x.Users).WithMany(x => x.OrganizationTeams).HasForeignKey(x => x.UserId);
             builder.HasOne(x => x.Organizations).WithMany(x => x.OrganizationTeams).HasForeignKey(x => x.OrganizationId);
-            builder.HasOne(x => x.Roles).WithMany(x => x.OrganizationTeams).HasForeignKey(x => x.RoleId);
+           builder.HasOne(x => x.Roles).WithMany(x => x.OrganizationTeams).HasForeignKey(x => x.RoleId);
             builder.HasOne(x => x.Products).WithMany(x => x.OrganizationTeams).HasForeignKey(x => x.ProductId);
         }
     }

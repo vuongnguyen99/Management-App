@@ -1,7 +1,6 @@
-﻿using Management.Data.Entities;
-using Management_Common.Exception;
-using Management_Core.Interface;
+﻿using Management_Common.Exception;
 using Management_Core.Models.Role;
+using Management_Core.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Management_App.Controllers.v1

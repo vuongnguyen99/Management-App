@@ -1,6 +1,5 @@
 using Management.Data;
 using Management_App.Middleware;
-using Management_Core.Interface;
 using Management_Core.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;

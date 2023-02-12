@@ -2,7 +2,6 @@
 using Management.Data.Entities;
 using Management_Common.Common;
 using Management_Common.Exception;
-using Management_Core.Interface;
 using Management_Core.Models.Paging;
 using Management_Core.Models.User;
 using Microsoft.EntityFrameworkCore;
@@ -10,72 +9,51 @@ using System.Security.Cryptography;
 
 namespace Management_Core.Services
 {
+    public interface IUserServices
+    {
+        Task<CreateUserResponse> CreateNewUser(CreateUserRequest request, CancellationToken cancellationToken);
+        Task<CreateUserResponse> UpdateUser(Guid Id, UpdateUser request, CancellationToken cancellationToken);
+        Task<UserModel> GetUsersByIdAsync(Guid? userId, CancellationToken cancellationToken);
+        Task<IReadOnlyList<UserModel>> GetUsersByFilterPageAsync(Pagination paging, CancellationToken cancellationToken);
+        Task DeleteUsersAsync(Guid userId, CancellationToken cancellationToken);
+        Task DeleteListUser(List<GuidObject> GuidObject, CancellationToken cancellationToken);
+    }
     public class UserServices : IUserServices
     {
-        private readonly ManagementDbContext _dbContext;
-        public UserServices(ManagementDbContext dbContext)
+        private readonly ManagementDbContext _context;
+        public UserServices(ManagementDbContext context)
         {
-            _dbContext = dbContext;
+            _context = context;
         }
 
-        public async Task<CreateUserResponse> CreateNewUser(CreateUserRequest request, Guid? RolesId, CancellationToken cancellationToken)
+        public async Task<CreateUserResponse> CreateNewUser(CreateUserRequest request, CancellationToken cancellationToken)
         {
-            ValidateCreateAndUpdateUser(request);
-            var newUser = new User
+            var users = new User
             {
-                FirstName = request.FirstName.ToLower(),
-                MiddleName = request.MiddleName.ToLower(),
-                LastName = request.LastName.ToLower(),
-                Active = request.Active || true,
-                Email = request.Email.ToLower(),
-                PasswordHash = PasswordHelper.HashPassword(request.PasswordHash),
-                Username = request.Email.Split('@')[0],
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                Email = request.Email,
+                Username = request.Username,
+                Active = true,
+                LoginFailedCount = 0,
+                PasswordHash = request.PasswordHash,
             };
-            _dbContext.Users.Add(newUser);
-            await _dbContext.SaveChangesAsync(cancellationToken);
-            var UserRoles = new List<UserRole>();
-
-            var roleObj = await _dbContext.Roles.FirstOrDefaultAsync(x => x.Id == RolesId, cancellationToken);
-            if (roleObj != null)
-            {
-                var assignRole = new UserRole
-                {
-                    UserId = newUser.Id,
-                    RoleId = roleObj.Id
-                };
-                
-                UserRoles.Add(assignRole);
-
-            }
-            _dbContext.UserRoles.AddRange(UserRoles);
-            await _dbContext.SaveChangesAsync();
-
-
-            var getNewUserRole = await _dbContext.UserRoles.Include(x => x.Role).Where(x => x.UserId == newUser.Id).ToListAsync();
-            var userRoles = new List<CreateUserRoleResponse>();
-            foreach (var item in getNewUserRole)
-            {
-                userRoles.Add(new CreateUserRoleResponse()
-                {
-                    RoleId = item.Role.Id,
-                    RoleName = item.Role.Name,
-                });
-            }
-            return new CreateUserResponse
-            {
-                Id = newUser.Id,
-                FirstName = newUser.FirstName,
-                LastName = newUser.LastName,
-                Email = newUser.Email,
-                Active = newUser.Active,
-                PasswordHash = newUser.PasswordHash,
-                Username = newUser.Username,
-                UserRolesResponse = userRoles,
-                CreateBy = newUser.CreateBy,
-                CreateDate = newUser.CreateDate,
-                ModifiedBy = newUser.ModifiedBy,
-                ModifiedDate = newUser.ModifiedDate
+            _context.Users.Add(users);
+            await _context.SaveChangesAsync();
+            return new CreateUserResponse { 
+                Id = users.Id,
+                FirstName = users.FirstName,
+                LastName = users.LastName,
+                Username = users.LastName,
+                Email = users.Email,
+                Active  =users.Active,
+                CreateBy = users.CreateBy,
+                CreateDate = users.CreateDate,
+                ModifiedBy = users.ModifiedBy,
+                ModifiedDate = users.ModifiedDate,
+                PasswordHash = users.PasswordHash
             };
+
         }
 
         public Task DeleteListUser(List<GuidObject> GuidObject, CancellationToken cancellationToken)
@@ -93,9 +71,21 @@ namespace Management_Core.Services
             throw new NotImplementedException();
         }
 
-        public Task<UserModel> GetUsersByIdAsync(Guid? userId, CancellationToken cancellationToken)
+        public async Task<UserModel> GetUsersByIdAsync(Guid? userId, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var getUser = await _context.Users.FirstOrDefaultAsync(x=>x.Id==userId, cancellationToken);
+            return new UserModel {
+                Id = getUser.Id,
+                LastName = getUser.LastName,
+                FirstName = getUser.FirstName,
+                Email = getUser.Email,
+                UserName = getUser.Username,
+                Active = getUser.Active,
+                CreateBy= getUser.CreateBy,
+                CreateDate= getUser.CreateDate,
+                ModifiedBy= getUser.ModifiedBy,
+                ModifiedDate= getUser.ModifiedDate,
+            };
         }
 
         public Task<CreateUserResponse> UpdateUser(Guid Id, UpdateUser request, CancellationToken cancellationToken)
@@ -107,7 +97,7 @@ namespace Management_Core.Services
         private Dictionary<string, string> ValidateCreateAndUpdateUser(CreateUserRequest request)
         {
             var duplicateError = new Dictionary<string, string>();
-            var checkUserEmail = _dbContext.Users.FirstOrDefaultAsync(x => x.Email == request.Email);
+            var checkUserEmail = _context.Users.FirstOrDefaultAsync(x => x.Email == request.Email);
             if (checkUserEmail != null)
             {
                 duplicateError.Add("Email", "Email is already exist");
