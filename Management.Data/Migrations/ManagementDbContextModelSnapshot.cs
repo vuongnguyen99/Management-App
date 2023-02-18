@@ -45,7 +45,7 @@ namespace Management.Data.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("ModifiedDate")
+                    b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
@@ -88,7 +88,7 @@ namespace Management.Data.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("ModifiedDate")
+                    b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ProjectName")
@@ -115,7 +115,7 @@ namespace Management.Data.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("ModifiedDate")
+                    b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("OrganizationId")
@@ -125,11 +125,9 @@ namespace Management.Data.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<Guid?>("ProductId")
-                        .IsRequired()
                         .HasColumnType("uuid");
 
                     b.Property<Guid?>("RoleId")
-                        .IsRequired()
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("UserId")
@@ -174,7 +172,7 @@ namespace Management.Data.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("ModifiedDate")
+                    b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
@@ -204,7 +202,7 @@ namespace Management.Data.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("ModifiedDate")
+                    b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
@@ -212,15 +210,10 @@ namespace Management.Data.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<Guid?>("OrganizationId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
                     b.HasIndex("Name")
                         .IsUnique();
-
-                    b.HasIndex("OrganizationId");
 
                     b.ToTable("Roles", (string)null);
                 });
@@ -241,7 +234,6 @@ namespace Management.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("FirstName")
@@ -254,15 +246,18 @@ namespace Management.Data.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<int>("LoginFailedCount")
+                    b.Property<int?>("LoginFailedCount")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasDefaultValue(0);
 
+                    b.Property<Guid?>("ManagedBy")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("ModifiedDate")
+                    b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("PasswordHash")
@@ -270,7 +265,6 @@ namespace Management.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Username")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -298,7 +292,7 @@ namespace Management.Data.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("ModifiedDate")
+                    b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("UserId", "ProductId");
@@ -325,7 +319,7 @@ namespace Management.Data.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("ModifiedDate")
+                    b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("UserId", "RoleId");
@@ -360,15 +354,11 @@ namespace Management.Data.Migrations
 
                     b.HasOne("Management.Data.Entities.Product", "Products")
                         .WithMany("OrganizationTeams")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProductId");
 
                     b.HasOne("Management.Data.Entities.Role", "Roles")
-                        .WithMany("OrganizationTeams")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany()
+                        .HasForeignKey("RoleId");
 
                     b.HasOne("Management.Data.Entities.User", "Users")
                         .WithMany("OrganizationTeams")
@@ -383,15 +373,6 @@ namespace Management.Data.Migrations
                     b.Navigation("Roles");
 
                     b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("Management.Data.Entities.Role", b =>
-                {
-                    b.HasOne("Management.Data.Entities.Organization", "Organization")
-                        .WithMany()
-                        .HasForeignKey("OrganizationId");
-
-                    b.Navigation("Organization");
                 });
 
             modelBuilder.Entity("Management.Data.Entities.UserProduct", b =>
@@ -452,8 +433,6 @@ namespace Management.Data.Migrations
 
             modelBuilder.Entity("Management.Data.Entities.Role", b =>
                 {
-                    b.Navigation("OrganizationTeams");
-
                     b.Navigation("UserRoles");
                 });
 

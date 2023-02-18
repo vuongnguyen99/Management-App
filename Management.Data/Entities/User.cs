@@ -18,6 +18,7 @@ namespace Management.Data.Entities
         public string? PasswordHash { get; set; }
         public bool Active { get; set; }
         public int? LoginFailedCount { get; set; }
+        public Guid? ManagedBy { get; set; }
         public virtual ICollection<UserRole>? UserRoles { get; set; }
         public virtual ICollection<UserProduct>? UserProducts { get; set; }
         public virtual ICollection<OrganizationTeam>? OrganizationTeams { get; set; }

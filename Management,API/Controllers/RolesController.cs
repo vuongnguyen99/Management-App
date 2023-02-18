@@ -3,9 +3,9 @@ using Management_Core.Models.Role;
 using Management_Core.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Management_App.Controllers.v1
+namespace Management_API.Controllers
 {
-    [Route("api/v1/roles")]
+    [Route("api/[controller]")]
     [ApiController]
     public class RolesController : ControllerBase
     {
@@ -18,10 +18,10 @@ namespace Management_App.Controllers.v1
         /// Create new role. For admins only.
         /// </summary>
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CreateRoleResponse))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
-        public async Task<IActionResult> CreateUser([FromBody] CreateRoleRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateUser(CreateRoleRequest request, CancellationToken cancellationToken)
         {
             try
             {

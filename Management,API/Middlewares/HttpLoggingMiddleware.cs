@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
-namespace Management_App.Middleware
+namespace Management.API.Middlewares
 {
     public class HttpLoggingMiddleware
     {

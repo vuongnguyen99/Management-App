@@ -10,8 +10,7 @@ namespace Management_Core.Models.Role
     public class GetRoleResponse: BaseModel
     {
         public Guid Id { get; set; }
-        public string Name { get; set; }
-        public Guid? OrganizationId { get; set; }
+        public string? Name { get; set; }
         public string? Description { get; set; }
     }
 }

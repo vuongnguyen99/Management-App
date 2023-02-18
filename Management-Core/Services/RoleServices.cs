@@ -14,7 +14,7 @@ namespace Management_Core.Services
 {
     public interface IRoleServices
     {
-        Task<CreateRoleResponse> CreateRole(CreateRoleRequest request, CancellationToken cancellationToken);
+        Task<string> CreateRole(CreateRoleRequest request, CancellationToken cancellationToken);
         Task<GetRoleResponse> GetRoleById(Guid roleId, CancellationToken cancellationToken);
 
     }
@@ -26,25 +26,17 @@ namespace Management_Core.Services
             _dbContext = dbContext;
         }
 
-        public async Task<CreateRoleResponse> CreateRole(CreateRoleRequest request, CancellationToken cancellationToken)
+        public async Task<string> CreateRole(CreateRoleRequest request, CancellationToken cancellationToken)
         {
             var newRole = new Role()
             {
                 Name = request.Name,
-                Description = request.Description
-            };
-            await _dbContext.Roles.AddAsync(newRole, cancellationToken);
-            await _dbContext.SaveChangesAsync(cancellationToken);
-            return new CreateRoleResponse
-            {
-                Id = newRole.Id,
-                Name = request.Name,
                 Description = request.Description,
-                CreateBy = newRole.CreateBy,
-                CreateDate = newRole.CreateDate,
-                ModifiedBy = newRole.ModifiedBy,
-                ModifiedDate = newRole.ModifiedDate,
             };
+            await _dbContext.Roles.AddAsync(newRole);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            return "Create Successfully";
         }
 
         public async Task<GetRoleResponse> GetRoleById(Guid roleId, CancellationToken cancellationToken)
@@ -58,9 +50,8 @@ namespace Management_Core.Services
             {
                 Id = getRoleById.Id,
                 Name = getRoleById.Name,
-               // OrganizationId = getRoleById.OrganizationId,
                 Description = getRoleById.Description,
-                CreateDate = (DateTime)DateTimeHelper.ConvertDateTimeLocalToUTC(getRoleById.CreateDate),
+                CreateDate = DateTimeHelper.ConvertDateTimeLocalToUTC(getRoleById.CreateDate),
                 CreateBy = getRoleById.CreateBy,
                 ModifiedBy = getRoleById.ModifiedBy,
                 ModifiedDate = DateTimeHelper.ConvertDateTimeLocalToUTC(getRoleById.ModifiedDate),
