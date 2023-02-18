@@ -5,15 +5,15 @@ VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Management.Data", "Management.Data\Management.Data.csproj", "{52698C2A-479A-4196-B1DE-5F1B0017EE1C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Management.Common", "Management-Common\Management.Common.csproj", "{2EA84A92-CE5F-4E26-905B-FAE488F48533}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Management.Common", "Management.Common\Management.Common.csproj", "{2EA84A92-CE5F-4E26-905B-FAE488F48533}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Management.Core", "Management-Core\Management.Core.csproj", "{3AD3058F-FC82-4268-863F-9D2ED6CCACA4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Management.Core", "Management.Core\Management.Core.csproj", "{3AD3058F-FC82-4268-863F-9D2ED6CCACA4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Frontend", "Frontend", "{7666B084-325B-42BD-A844-8215505EA44C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backend", "Backend", "{F7241709-6790-4594-ABB2-22C12DDABF0D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Management.API", "Management,API\Management.API.csproj", "{D7C6B27C-D296-4FC3-8C4A-428F2A1ED9EC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Management.API", "Management.API\Management.API.csproj", "{D7C6B27C-D296-4FC3-8C4A-428F2A1ED9EC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

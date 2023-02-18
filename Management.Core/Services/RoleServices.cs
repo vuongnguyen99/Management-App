@@ -5,7 +5,7 @@ using Management.Data;
 using Management.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Management_Core.Services
+namespace Management.Core.Services
 {
     public interface IRoleServices
     {

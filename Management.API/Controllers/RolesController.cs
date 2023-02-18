@@ -1,6 +1,6 @@
 ﻿using Management.Common.Exception;
 using Management.Core.Models.Role;
-using Management_Core.Services;
+using Management.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Management_API.Controllers

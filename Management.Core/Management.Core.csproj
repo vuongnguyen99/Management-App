@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Management-Common\Management.Common.csproj" />
+    <ProjectReference Include="..\Management.Common\Management.Common.csproj" />
     <ProjectReference Include="..\Management.Data\Management.Data.csproj" />
   </ItemGroup>
 
