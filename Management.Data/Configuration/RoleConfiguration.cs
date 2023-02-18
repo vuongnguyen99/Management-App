@@ -11,8 +11,7 @@ namespace Management.Data.Configuration
             builder.ToTable("Roles");
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id);
-            builder.Property(x => x.Name).IsRequired().HasMaxLength(200);
-            builder.HasIndex(x => x.Name).IsUnique(true);
+            builder.Property(x => x.Name);
             builder.Property(x => x.Description).HasMaxLength(200);
         }
     }

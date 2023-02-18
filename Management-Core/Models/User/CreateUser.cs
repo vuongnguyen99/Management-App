@@ -10,15 +10,14 @@ namespace Management_Core.Models.User
 {
     public class CreateUserRequest
     {
-#nullable disable
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
-        public string Username { get; set; }
-        public string PasswordHash { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Email { get; set; }
+        public string? Username { get; set; }
+        public string? PasswordHash { get; set; }
         public bool Active { get; set; }
         public int LoginFailedCount { get; set; }
-        public List<CreateUserRole> UserRoles { get; set; }
+       // public List<CreateUserRole> UserRoles { get; set; }
     }
     public class CreateUserRole
     {
@@ -29,13 +28,14 @@ namespace Management_Core.Models.User
     public class CreateUserResponse : BaseModel
     {
         public Guid Id { get; set; }
+#nullable disable
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
         public string Username { get; set; }
         public string PasswordHash { get; set; }
         public bool Active { get; set; }
-        public List<CreateUserRoleResponse> UserRolesResponse { get; set; }
+       // public List<CreateUserRoleResponse> UserRolesResponse { get; set; }
     }
     public class CreateUserRoleResponse
     {

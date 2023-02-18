@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Management.Data.Migrations
 {
     [DbContext(typeof(ManagementDbContext))]
-    [Migration("20221231100828_Initial")]
+    [Migration("20230218093750_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -24,45 +24,6 @@ namespace Management.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("Management.Data.Entities.Cart", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("CreateBy")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("ModifiedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Carts", (string)null);
-                });
 
             modelBuilder.Entity("Management.Data.Entities.Image", b =>
                 {
@@ -87,7 +48,7 @@ namespace Management.Data.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("ModifiedDate")
+                    b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
@@ -97,14 +58,52 @@ namespace Management.Data.Migrations
                     b.Property<Guid?>("ProductId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("Images", (string)null);
                 });
 
-            modelBuilder.Entity("Management.Data.Entities.Order", b =>
+            modelBuilder.Entity("Management.Data.Entities.Organization", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("CreateBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ProjectName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Organizations", (string)null);
+                });
+
+            modelBuilder.Entity("Management.Data.Entities.OrganizationTeam", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -119,77 +118,35 @@ namespace Management.Data.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("ModifiedDate")
+                    b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("OrderDate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<Guid>("OrganizationId")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("ShipAddress")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                    b.Property<Guid?>("ParentOrganizationNodeId")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("ShipEmail")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("character varying(50)");
+                    b.Property<Guid?>("ProductId")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("ShipName")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<string>("ShipPhoneNumber")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<string>("Status")
-                        .HasColumnType("text");
+                    b.Property<Guid?>("RoleId")
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Orders", (string)null);
-                });
-
-            modelBuilder.Entity("Management.Data.Entities.OrderDetail", b =>
-                {
-                    b.Property<Guid>("OrderId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("CreateBy")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("ModifiedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("integer");
-
-                    b.HasKey("OrderId", "ProductId");
+                    b.HasIndex("OrganizationId");
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderDetails", (string)null);
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("OrganizationTeams", (string)null);
                 });
 
             modelBuilder.Entity("Management.Data.Entities.Product", b =>
@@ -218,17 +175,10 @@ namespace Management.Data.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("ModifiedDate")
+                    b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<double>("Price")
-                        .HasColumnType("double precision");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -255,7 +205,7 @@ namespace Management.Data.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("ModifiedDate")
+                    b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
@@ -280,9 +230,6 @@ namespace Management.Data.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("Avatar")
-                        .HasColumnType("text");
-
                     b.Property<string>("CreateBy")
                         .HasColumnType("text");
 
@@ -290,7 +237,6 @@ namespace Management.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("FirstName")
@@ -303,15 +249,18 @@ namespace Management.Data.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<int>("LoginFailedCount")
+                    b.Property<int?>("LoginFailedCount")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasDefaultValue(0);
 
+                    b.Property<Guid?>("ManagedBy")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("ModifiedDate")
+                    b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("PasswordHash")
@@ -319,7 +268,6 @@ namespace Management.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Username")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -328,6 +276,33 @@ namespace Management.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Users", (string)null);
+                });
+
+            modelBuilder.Entity("Management.Data.Entities.UserProduct", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CreateBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("UserId", "ProductId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("UserProducts", (string)null);
                 });
 
             modelBuilder.Entity("Management.Data.Entities.UserRole", b =>
@@ -347,7 +322,7 @@ namespace Management.Data.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("ModifiedDate")
+                    b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("UserId", "RoleId");
@@ -357,62 +332,71 @@ namespace Management.Data.Migrations
                     b.ToTable("UserRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Management.Data.Entities.Cart", b =>
-                {
-                    b.HasOne("Management.Data.Entities.Product", "Product")
-                        .WithMany("Carts")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Management.Data.Entities.User", "User")
-                        .WithMany("Carts")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Management.Data.Entities.Image", b =>
                 {
                     b.HasOne("Management.Data.Entities.Product", "Products")
                         .WithMany("Images")
                         .HasForeignKey("ProductId");
 
-                    b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("Management.Data.Entities.Order", b =>
-                {
                     b.HasOne("Management.Data.Entities.User", "User")
-                        .WithMany("Orders")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("Images")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Products");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Management.Data.Entities.OrderDetail", b =>
+            modelBuilder.Entity("Management.Data.Entities.OrganizationTeam", b =>
                 {
-                    b.HasOne("Management.Data.Entities.Order", "Order")
-                        .WithMany("OrderDetails")
-                        .HasForeignKey("OrderId")
+                    b.HasOne("Management.Data.Entities.Organization", "Organizations")
+                        .WithMany("OrganizationTeams")
+                        .HasForeignKey("OrganizationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Management.Data.Entities.Product", "Products")
+                        .WithMany("OrganizationTeams")
+                        .HasForeignKey("ProductId");
+
+                    b.HasOne("Management.Data.Entities.Role", "Roles")
+                        .WithMany()
+                        .HasForeignKey("RoleId");
+
+                    b.HasOne("Management.Data.Entities.User", "Users")
+                        .WithMany("OrganizationTeams")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Organizations");
+
+                    b.Navigation("Products");
+
+                    b.Navigation("Roles");
+
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Management.Data.Entities.UserProduct", b =>
+                {
                     b.HasOne("Management.Data.Entities.Product", "Product")
-                        .WithMany("OrderDetails")
+                        .WithMany("UserProducts")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_UserProduct_Product_ProductId");
 
-                    b.Navigation("Order");
+                    b.HasOne("Management.Data.Entities.User", "User")
+                        .WithMany("UserProducts")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_UserProduct_User_UserId");
 
                     b.Navigation("Product");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Management.Data.Entities.UserRole", b =>
@@ -436,18 +420,18 @@ namespace Management.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Management.Data.Entities.Order", b =>
+            modelBuilder.Entity("Management.Data.Entities.Organization", b =>
                 {
-                    b.Navigation("OrderDetails");
+                    b.Navigation("OrganizationTeams");
                 });
 
             modelBuilder.Entity("Management.Data.Entities.Product", b =>
                 {
-                    b.Navigation("Carts");
-
                     b.Navigation("Images");
 
-                    b.Navigation("OrderDetails");
+                    b.Navigation("OrganizationTeams");
+
+                    b.Navigation("UserProducts");
                 });
 
             modelBuilder.Entity("Management.Data.Entities.Role", b =>
@@ -457,9 +441,11 @@ namespace Management.Data.Migrations
 
             modelBuilder.Entity("Management.Data.Entities.User", b =>
                 {
-                    b.Navigation("Carts");
+                    b.Navigation("Images");
 
-                    b.Navigation("Orders");
+                    b.Navigation("OrganizationTeams");
+
+                    b.Navigation("UserProducts");
 
                     b.Navigation("UserRoles");
                 });

@@ -12,9 +12,11 @@ namespace Management.Data.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
         public Guid? ProductId { get; set; }
+        public Guid? UserId { get; set; }
         public string? Name { get; set; }
         public string? ImagePath { get; set; }
         public long FileSize { get; set; }
         public Product? Products { get; set; }
+        public User? User { get; set; }
     }
 }
