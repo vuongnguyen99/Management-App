@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Management_Core.Models.Role
+namespace Management.Core.Models.Role
 {
     public class CreateRoleRequest
     {

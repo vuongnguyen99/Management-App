@@ -12,9 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Management-Common\Management.Common.csproj" />
     <ProjectReference Include="..\Management-Core\Management.Core.csproj" />
-    <ProjectReference Include="..\Management.Data\Management.Data.csproj" />
   </ItemGroup>
 
 </Project>

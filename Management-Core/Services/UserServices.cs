@@ -1,13 +1,10 @@
 ﻿using Management.Data;
 using Management.Data.Entities;
-using Management_Common.Common;
-using Management_Common.Exception;
 using Management_Core.Models.Paging;
 using Management_Core.Models.User;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography;
 
-namespace Management_Core.Services
+namespace Management.Core.Services
 {
     public interface IUserServices
     {
