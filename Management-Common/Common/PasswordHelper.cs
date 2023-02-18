@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Management_Common.Common
+namespace Management.Common.Common
 {
     public class PasswordHelper
     {

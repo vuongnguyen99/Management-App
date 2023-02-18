@@ -1,4 +1,4 @@
-﻿namespace Management_Common.Exception
+﻿namespace Management.Common.Exception
 {
     public class ValidationException : System.Exception
     {

@@ -1,13 +1,12 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using Management.Common.Common;
 using Management.Data;
-using Management_Common.Common;
-using Management_Common.Exception;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace Management_Core.Services
+namespace Management.Core.Services
 {
     public interface IImageServices
     {
