@@ -1,6 +1,7 @@
 ﻿using Management.Data.Entities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data.SqlTypes;
 using System.Linq;
 using System.Text;
@@ -10,14 +11,19 @@ namespace Management_Core.Models.User
 {
     public class CreateUserRequest
     {
+        [Required]
         public string? FirstName { get; set; }
+        [Required]
         public string? LastName { get; set; }
+        [Required]
+        
         public string? Email { get; set; }
+        [Required]
         public string? Username { get; set; }
         public string? PasswordHash { get; set; }
         public bool Active { get; set; }
-        public int LoginFailedCount { get; set; }
-       // public List<CreateUserRole> UserRoles { get; set; }
+        public int LoginFailedCount { get; set; } = 0;
+        public List<Guid> RoleId { get; set; }
     }
     public class CreateUserRole
     {
@@ -35,7 +41,7 @@ namespace Management_Core.Models.User
         public string Username { get; set; }
         public string PasswordHash { get; set; }
         public bool Active { get; set; }
-       // public List<CreateUserRoleResponse> UserRolesResponse { get; set; }
+        public List<CreateUserRoleResponse> UserRolesResponse { get; set; }
     }
     public class CreateUserRoleResponse
     {

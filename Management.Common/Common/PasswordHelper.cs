@@ -10,7 +10,7 @@ namespace Management.Common.Common
     {
         public static string HashPassword(string hashedPassword)
         {
-            return BCrypt.Net.BCrypt.HashPassword(hashedPassword);
+            return BCrypt.Net.BCrypt.HashPassword(hashedPassword, BCrypt.Net.BCrypt.GenerateSalt(13));
         }
 
         public static bool VerifiedPassword(string password, string hasedPassword)
