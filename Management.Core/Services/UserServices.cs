@@ -10,26 +10,31 @@ namespace Management.Core.Services
 {
     public interface IUserServices
     {
-        Task<CreateUserResponse> CreateNewUser(CreateUserRequest request,CancellationToken cancellationToken);
+        Task<CreateUserResponse> CreateNewUser(CreateUserRequest request, Guid userManagerId, CancellationToken cancellationToken);
         Task<CreateUserResponse> UpdateUser(Guid Id, UpdateUser request, CancellationToken cancellationToken);
         Task<UserModel> GetUsersByIdAsync(Guid? userId, CancellationToken cancellationToken);
         Task<IReadOnlyList<UserModel>> GetUsersByFilterPageAsync(Pagination paging, CancellationToken cancellationToken);
-        Task DeleteUsersAsync(Guid userId, CancellationToken cancellationToken);
-        Task DeleteListUser(List<GuidObject> GuidObject, CancellationToken cancellationToken);
+        Task<string> DeleteUsersAsync(Guid userId, CancellationToken cancellationToken);
+        Task<string> DeleteListUser(List<Guid> usersId, CancellationToken cancellationToken);
     }
     public class UserServices : IUserServices
     {
         private readonly ManagementDbContext _context;
-        public UserServices(ManagementDbContext context)
+        private readonly IRoleServices _roleServices;
+
+        public UserServices(ManagementDbContext context, IRoleServices roleServices)
         {
             _context = context;
+            _roleServices = roleServices;
         }
         public Task<CreateUserResponse> UpdateUser(Guid Id, UpdateUser request, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
-        public async Task<CreateUserResponse> CreateNewUser(CreateUserRequest request, CancellationToken cancellationToken)
+        public async Task<CreateUserResponse> CreateNewUser(CreateUserRequest request, Guid userManagerId ,CancellationToken cancellationToken)
         {
+            ValidateCreateAndUpdateUser(request);
+            var userId = await _context.Users.FirstOrDefaultAsync(um => um.Id == userManagerId, cancellationToken);
             var users = new User
             {
                 FirstName = request.FirstName,
@@ -38,6 +43,7 @@ namespace Management.Core.Services
                 Username = request.Username,
                 Active = true,
                 PasswordHash = PasswordHelper.HashPassword(request.PasswordHash),
+                ManagedBy = userManagerId,
             };
             _context.Users.Add(users);
             await _context.SaveChangesAsync();
@@ -76,14 +82,32 @@ namespace Management.Core.Services
             };
         }
 
-        public Task DeleteListUser(List<GuidObject> GuidObject, CancellationToken cancellationToken)
+        public async Task<string> DeleteListUser(List<Guid> usersId, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                foreach(var userId in usersId)
+                {
+                    await DeleteUsersAsync(userId, cancellationToken);
+                }
+                return "Delete success";
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
-        public Task DeleteUsersAsync(Guid userId, CancellationToken cancellationToken)
+        public async Task<string> DeleteUsersAsync(Guid userId, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var existingUsers = await _context.Users.FirstOrDefaultAsync(x=> x.Id == userId, cancellationToken);
+            if(existingUsers== null)
+            {
+                throw new NotFoundException("Not found users");
+            }
+            _context.Users.Remove(existingUsers);
+            await _context.SaveChangesAsync(cancellationToken);
+            return "Delete success";
         }
 
         public Task<IReadOnlyList<UserModel>> GetUsersByFilterPageAsync(Pagination paging, CancellationToken cancellationToken)

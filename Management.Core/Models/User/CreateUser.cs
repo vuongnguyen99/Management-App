@@ -23,7 +23,7 @@ namespace Management_Core.Models.User
         public string? PasswordHash { get; set; }
         public bool Active { get; set; }
         public int LoginFailedCount { get; set; } = 0;
-        public List<Guid> RoleId { get; set; }
+        public List<Guid>? RoleId { get; set; }
     }
     public class CreateUserRole
     {

@@ -1,13 +1,20 @@
 ﻿using Management.Data.Configuration;
 using Management.Data.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace Management.Data
 {
     public class ManagementDbContext: DbContext
     {
-        public ManagementDbContext(DbContextOptions<ManagementDbContext> options) : base(options)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private const string TokenKey = "token";
+        public ManagementDbContext(DbContextOptions<ManagementDbContext> options, IHttpContextAccessor httpContextAccessor) : base(options)
         {
+            _httpContextAccessor = httpContextAccessor;
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -20,7 +27,10 @@ namespace Management.Data
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new UserRoleConfiguration());
         }
-
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseNpgsql("Host={"localhost"};Username={"postgres"};Password={"password"};");
+        }
         public override int SaveChanges()
         {
             var entries = ChangeTracker
@@ -28,16 +38,21 @@ namespace Management.Data
                 .Where(e => e.Entity is BaseModel && (
                         e.State == EntityState.Added
                         || e.State == EntityState.Modified));
+            var userId = _httpContextAccessor?.HttpContext?.User?.FindFirst(ClaimTypes.Name).Value;
 
+            var currentUsername = !string.IsNullOrEmpty(userId)
+                ? userId
+                : "Unknown";
             foreach (var entityEntry in entries)
             {
                 ((BaseModel)entityEntry.Entity).ModifiedDate = DateTime.UtcNow;
-                ((BaseModel)entityEntry.Entity).ModifiedBy = "UnKnown";
+                ((BaseModel)entityEntry.Entity).ModifiedBy = currentUsername;
 
                 if (entityEntry.State == EntityState.Added)
                 {
                     ((BaseModel)entityEntry.Entity).CreateDate = DateTime.UtcNow;
-                    ((BaseModel)entityEntry.Entity).CreateBy = "UnKnown";
+                    ((BaseModel)entityEntry.Entity).CreateBy = currentUsername;
+                    ((BaseModel)entityEntry.Entity).ModifiedBy = currentUsername;
                     ((BaseModel)entityEntry.Entity).ModifiedDate = DateTime.UtcNow;
                 }
             }
@@ -47,6 +62,7 @@ namespace Management.Data
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
+            
             foreach (var item in ChangeTracker.Entries())
             {
                 if (item.Entity is BaseModel entityReference)
@@ -57,6 +73,7 @@ namespace Management.Data
                             {
                                 entityReference.CreateDate = DateTime.UtcNow;
                                 entityReference.CreateBy = "Unknown";
+                                entityReference.ModifiedBy = "Unknown";
                                 entityReference.ModifiedDate = DateTime.UtcNow;
                                 break;
                             }

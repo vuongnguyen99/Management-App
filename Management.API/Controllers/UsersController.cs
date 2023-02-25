@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using Microsoft.AspNetCore.Identity;
 
 namespace Management.API.Controllers
 {
@@ -25,15 +26,16 @@ namespace Management.API.Controllers
         /// <summary>
         /// Create new user. For admins only.
         /// </summary>
+        /// <remarks>Awesomeness!</remarks>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CreateUserResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
-        public async Task<IActionResult> CreateNewUser([FromBody] CreateUserRequest request ,CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateNewUser(Guid userManagerId, [FromBody] CreateUserRequest request ,CancellationToken cancellationToken)
         {
             try
             {
-                var result = await _usersServices.CreateNewUser(request, cancellationToken);
+                var result = await _usersServices.CreateNewUser(request, userManagerId, cancellationToken);
                 return Ok(result);
             }
             catch (ValidationException ex)
@@ -59,6 +61,43 @@ namespace Management.API.Controllers
             {
                 var result = await _usersServices.GetUsersByIdAsync(userId, cancellationToken);
                 return Ok(result);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpDelete]
+        [ProducesResponseType(StatusCodes.Status204NoContent, Type = typeof(NoContentResult))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
+        public async Task<IActionResult> DeleteUsers([FromBody] List<Guid> usersId, CancellationToken cancellationToken)
+        {
+            try
+            {
+                await _usersServices.DeleteListUser(usersId, cancellationToken);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent, Type = typeof(NoContentResult))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
+        public async Task<IActionResult> DeleteUsers([FromBody] Guid userId, CancellationToken cancellationToken)
+        {
+            try
+            {
+                await _usersServices.DeleteUsersAsync(userId, cancellationToken);
+                return NoContent();
             }
             catch (NotFoundException ex)
             {

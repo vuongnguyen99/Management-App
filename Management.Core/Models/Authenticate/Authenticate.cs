@@ -8,13 +8,13 @@ namespace Management.Core.Models.Authenticate
 {
     public class Authenticate
     {
-        public string UserName { get; set; }
-        public string Password { get; set; }
+        public string? UserName { get; set; }
+        public string? Password { get; set; }
         public bool RememberMe { get; set; }
     }
 
     public class ResponseAuthenticate
     {
-        public string AccessToken { get; set; }
+        public string? AccessToken { get; set; }
     }
 }
