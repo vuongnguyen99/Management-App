@@ -26,16 +26,15 @@ namespace Management.API.Controllers
         /// <summary>
         /// Create new user. For admins only.
         /// </summary>
-        /// <remarks>Awesomeness!</remarks>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CreateUserResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
-        public async Task<IActionResult> CreateNewUser(Guid userManagerId, [FromBody] CreateUserRequest request ,CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateNewUser([FromBody] CreateUserRequest request ,CancellationToken cancellationToken)
         {
             try
             {
-                var result = await _usersServices.CreateNewUser(request, userManagerId, cancellationToken);
+                var result = await _usersServices.CreateNewUser(request, cancellationToken);
                 return Ok(result);
             }
             catch (ValidationException ex)
@@ -51,14 +50,14 @@ namespace Management.API.Controllers
         /// <summary>
         /// Get a user by id. For admins only.
         /// </summary>
-        [HttpGet("{id}")]
+        [HttpGet("{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserModel))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
         public async Task<IActionResult> GetUserById(Guid userId, CancellationToken cancellationToken)
         {
             try
-            {
+            {   
                 var result = await _usersServices.GetUsersByIdAsync(userId, cancellationToken);
                 return Ok(result);
             }
@@ -71,7 +70,9 @@ namespace Management.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-
+        /// <summary>
+        /// Delete list users. For admins only.
+        /// </summary>
         [HttpDelete]
         [ProducesResponseType(StatusCodes.Status204NoContent, Type = typeof(NoContentResult))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
@@ -87,7 +88,9 @@ namespace Management.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-
+        /// <summary>
+        /// Delete a user by id. For admins only.
+        /// </summary>
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent, Type = typeof(NoContentResult))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]

@@ -10,7 +10,7 @@ namespace Management.Core.Services
 {
     public interface IUserServices
     {
-        Task<CreateUserResponse> CreateNewUser(CreateUserRequest request, Guid userManagerId, CancellationToken cancellationToken);
+        Task<CreateUserResponse> CreateNewUser(CreateUserRequest request, CancellationToken cancellationToken);
         Task<CreateUserResponse> UpdateUser(Guid Id, UpdateUser request, CancellationToken cancellationToken);
         Task<UserModel> GetUsersByIdAsync(Guid? userId, CancellationToken cancellationToken);
         Task<IReadOnlyList<UserModel>> GetUsersByFilterPageAsync(Pagination paging, CancellationToken cancellationToken);
@@ -20,21 +20,17 @@ namespace Management.Core.Services
     public class UserServices : IUserServices
     {
         private readonly ManagementDbContext _context;
-        private readonly IRoleServices _roleServices;
 
-        public UserServices(ManagementDbContext context, IRoleServices roleServices)
+        public UserServices(ManagementDbContext context)
         {
             _context = context;
-            _roleServices = roleServices;
         }
         public Task<CreateUserResponse> UpdateUser(Guid Id, UpdateUser request, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
-        }
-        public async Task<CreateUserResponse> CreateNewUser(CreateUserRequest request, Guid userManagerId ,CancellationToken cancellationToken)
+        }   
+        public async Task<CreateUserResponse> CreateNewUser(CreateUserRequest request ,CancellationToken cancellationToken)
         {
-            ValidateCreateAndUpdateUser(request);
-            var userId = await _context.Users.FirstOrDefaultAsync(um => um.Id == userManagerId, cancellationToken);
             var users = new User
             {
                 FirstName = request.FirstName,
@@ -43,7 +39,7 @@ namespace Management.Core.Services
                 Username = request.Username,
                 Active = true,
                 PasswordHash = PasswordHelper.HashPassword(request.PasswordHash),
-                ManagedBy = userManagerId,
+                ManagedBy = request.UserManagerId,
             };
             _context.Users.Add(users);
             await _context.SaveChangesAsync();
@@ -58,6 +54,17 @@ namespace Management.Core.Services
                     RoleId = role.Id
                 };
                 _context.UserRoles.Add(userRole);
+            }
+
+            var products = await _context.Products.Where(x => request.ProductId.Contains(x.Id)).ToListAsync(cancellationToken);
+            foreach(var newPro in products)
+            {
+                var userProduct = new UserProduct
+                {
+                    UserId = users.Id,
+                    ProductId = newPro.Id
+                };
+                _context.UserProducts.Add(userProduct);
             }
 
             await _context.SaveChangesAsync();
@@ -78,6 +85,11 @@ namespace Management.Core.Services
                 {
                     RoleId = x.Id,
                     RoleName = x.Name
+                }).ToList(),
+                UserProductsResponse = products.Select(y=> new CreateUserProductResponse
+                {
+                    ProductId = y.Id,
+                    ProductName = y.Name
                 }).ToList()
             };
         }

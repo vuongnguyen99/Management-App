@@ -70,20 +70,22 @@ namespace Management.Core.Services
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Authenticate:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            var claims = new[]
+
+            ClaimsIdentity claims = new ClaimsIdentity(new Claim[]
             {
-                new Claim(ClaimTypes.Name, user.Email),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Name, user.Username),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
-            };
+            });
+            IEnumerable <Claim> claimList = claims.Claims;
             var token = new JwtSecurityToken(_configuration["Authenticate:Issuer"],
                 _configuration["Authenticate:Audience"],
-                claims,
-                expires: DateTime.Now.AddHours(2),
+                claimList,
+                expires: DateTime.Now.AddMinutes(120),
                 signingCredentials: credentials);
 
-
             return new JwtSecurityTokenHandler().WriteToken(token);
-
         }
+
     }
 }

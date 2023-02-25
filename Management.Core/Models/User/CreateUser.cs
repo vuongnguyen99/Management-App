@@ -16,14 +16,15 @@ namespace Management_Core.Models.User
         [Required]
         public string? LastName { get; set; }
         [Required]
-        
         public string? Email { get; set; }
         [Required]
         public string? Username { get; set; }
-        public string? PasswordHash { get; set; }
+        public string PasswordHash { get; set; }
         public bool Active { get; set; }
         public int LoginFailedCount { get; set; } = 0;
-        public List<Guid>? RoleId { get; set; }
+        public List<Guid> RoleId { get; set; }
+        public List<Guid> ProductId { get; set; }
+        public Guid? UserManagerId { get; set; }
     }
     public class CreateUserRole
     {
@@ -42,10 +43,16 @@ namespace Management_Core.Models.User
         public string PasswordHash { get; set; }
         public bool Active { get; set; }
         public List<CreateUserRoleResponse> UserRolesResponse { get; set; }
+        public List<CreateUserProductResponse> UserProductsResponse { get; set; }
     }
     public class CreateUserRoleResponse
     {
         public Guid RoleId { get; set; }
         public string RoleName { get; set; }
+    }
+    public class CreateUserProductResponse
+    {
+        public Guid ProductId { get; set; }
+        public string ProductName { get; set; }
     }
 }
