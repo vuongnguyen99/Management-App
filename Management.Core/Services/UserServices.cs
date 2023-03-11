@@ -13,7 +13,7 @@ namespace Management.Core.Services
         Task<CreateUserResponse> CreateNewUser(CreateUserRequest request, CancellationToken cancellationToken);
         Task<CreateUserResponse> UpdateUser(Guid Id, UpdateUser request, CancellationToken cancellationToken);
         Task<UserModel> GetUsersByIdAsync(Guid? userId, CancellationToken cancellationToken);
-        Task<IReadOnlyList<UserModel>> GetUsersByFilterPageAsync(Pagination paging, CancellationToken cancellationToken);
+        Task<GetUsersByProductIdResponse> GetUsersByFilterPageAsync(Guid ProductId, GetUsersByProductIdRequest paging, CancellationToken cancellationToken);
         Task<string> DeleteUsersAsync(Guid userId, CancellationToken cancellationToken);
         Task<string> DeleteListUser(List<Guid> usersId, CancellationToken cancellationToken);
     }
@@ -122,9 +122,79 @@ namespace Management.Core.Services
             return "Delete success";
         }
 
-        public Task<IReadOnlyList<UserModel>> GetUsersByFilterPageAsync(Pagination paging, CancellationToken cancellationToken)
+        public async Task<GetUsersByProductIdResponse> GetUsersByFilterPageAsync(Guid ProductId, GetUsersByProductIdRequest request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var query = await(from u in _context.Users
+                              join ur in _context.UserRoles on u.Id equals ur.UserId
+                              join r in _context.Roles on ur.RoleId equals r.Id
+                              join up in _context.UserProducts on u.Id equals up.UserId
+                              join p in _context.Products on up.ProductId equals p.Id
+                              where p.Id == ProductId
+                              select new { u, ur, r, up, p }).ToListAsync();
+            //filter
+            if (request.Filter.FirstName != null)
+            {
+                query = query.Where(x => x.u.FirstName == request.Filter.FirstName).ToList();
+            }
+            if (request.Filter.LastName != null)
+            {
+                query = query.Where(x => x.u.LastName == request.Filter.LastName).ToList();
+            }
+            if (request.Filter.Email != null)
+            {
+                query = query.Where(x => x.u.Email == request.Filter.Email).ToList();
+            }
+            if (request.Filter.ProductName != null)
+            {
+                query = query.Where(x => x.p.Name == request.Filter.ProductName).ToList();
+            }
+            //if (request.Filter.ManageBy != null)
+            //{
+            //    query = query.Where(x => x.u.ManagedBy == request.Filter.ManageBy).ToList();
+            //}
+            if (request.Filter.RoleName != null)
+            {
+                query = query.Where(x => x.r.Name == request.Filter.RoleName).ToList();
+            }
+
+            var listUser = query.Skip(request.ItemPerPage * (request.StartIndex - 1)).Take(request.ItemPerPage);
+
+            var manageUser = listUser.FirstOrDefault(x => x.u.ManagedBy == x.u.Id);
+            var manageUserMapping = $"{manageUser.u.FirstName} {manageUser.u.LastName}";
+
+            var result = new GetUsersByProductId
+            {
+                ProducId = listUser.FirstOrDefault().p.Id,
+                ProductName = listUser.FirstOrDefault().p.Name,
+                Active = listUser.FirstOrDefault().p.Active,
+                Users = listUser.Select(x => new GetUsers
+                {
+                    UserId = x.u.Id,
+                    FullName = $"{x.u.FirstName} {x.u.LastName}",
+                    Email = x.u.Email,
+                    Active = x.u.Active,
+                    ManageBy = new UserManage
+                    {
+                        Id = x.u.ManagedBy.Value,
+                        Name = manageUserMapping
+                    },
+                    Roles = new List<UsersRole>
+                        {
+                            new UsersRole
+                            {
+                                RoleId = x.r.Id,
+                                RoleName = x.r.Name
+                            }
+                    }
+                }).ToList()
+            };
+
+            return new GetUsersByProductIdResponse
+            {
+                Result = result,
+                ItemsPerPage = request.ItemPerPage,
+                StartIndex = request.StartIndex
+            };
         }
 
         public async Task<UserModel> GetUsersByIdAsync(Guid? userId, CancellationToken cancellationToken)
@@ -180,10 +250,7 @@ namespace Management.Core.Services
             return duplicateError;
         }
 
-        private string ValidatePaging(Pagination paging)
-        {
-            return "Validate Failed";
-        }
+
         #endregion
     }
 }

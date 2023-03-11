@@ -1,9 +1,4 @@
 ﻿using Management.Data.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Management_Core.Models.User
 {
@@ -15,26 +10,51 @@ namespace Management_Core.Models.User
         public string? LastName { get; set; }
         public string? UserName { get; set; }
         public bool Active { get; set; }
-        public virtual ICollection<UserRoleModel>? UserRoleModel { get; set; }
+        public virtual ICollection<UsersRole>? Roles { get; set; }
+        public virtual ICollection<Products>? Products { get; set; }
+        public Guid ManageBy { get; set; }  
     }
 
-    public class UserRoleModel
+
+    public class Products
+    {
+        public Guid ProductId { get; set; }
+        public string? ProductName { get; set; }
+    }
+    public class GetUsersByProductIdResponse
+    {
+        public GetUsersByProductId Result { get; set; }
+        public int StartIndex { get; set; } = 1;
+        public int ItemsPerPage { get; set; } = 25;
+    }
+    public class GetUsersByProductId
+    {
+        public Guid ProducId { get; set; }
+        public string ProductName { get; set; }
+        public bool Active { get; set; }
+        public ICollection<GetUsers> Users { get; set; }
+    }
+
+    public class GetUsers: BaseModel
+    {
+        public Guid UserId { get; set; }
+        public string Email { get; set; }
+        public string FullName { get; set; }
+        public UserManage ManageBy { get; set; }
+        public bool Active { get; set; }
+        public ICollection<UsersRole>? Roles { get; set; }
+    }
+
+    public class UsersRole
     {
         public Guid RoleId { get; set; }
-        public string? RoleName { get; set; }    
-        public string? Description { get; set; }    
+        public string RoleName { get; set; }
     }
 
-    public class UserCartModel
-    {
-        public Guid CartId { set; get; }
-        public Guid ProductId { set; get; }
-        public int Quantity { set; get; }
-        public decimal Price { set; get; }
-    }
-
-    public class GuidObject
+    public class UserManage
     {
         public Guid Id { get; set; }
+        public string Name { get; set; }
     }
+
 }

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using Microsoft.AspNetCore.Identity;
+using Management_Core.Models.Paging;
 
 namespace Management.API.Controllers
 {
@@ -105,6 +106,34 @@ namespace Management.API.Controllers
             catch (NotFoundException ex)
             {
                 return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Get list users by productId. For admins only.
+        /// </summary>
+        [HttpGet("users/{productId}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetUsersByProductIdResponse))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
+        public async Task<IActionResult> GetUsersByProductId(Guid productId, GetUsersByProductIdRequest request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var result = await _usersServices.GetUsersByFilterPageAsync(productId, request, cancellationToken);
+                return Ok(result);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
